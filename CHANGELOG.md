@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/romainsessa/P6-Gerez-l-integration-et-la-livraison-continue-Application/compare/v1.0.1...v1.1.0) (2026-06-29)
+
+
+### Features
+
+* **ci:** synchronize project versions with semantic-release ([d9ed24c](https://github.com/romainsessa/P6-Gerez-l-integration-et-la-livraison-continue-Application/commit/d9ed24cc90ba0aa636af7482c37f46e5f6cd5cca))
+
 ## [1.0.1](https://github.com/romainsessa/P6-Gerez-l-integration-et-la-livraison-continue-Application/compare/v1.0.0...v1.0.1) (2026-06-29)
 
 
