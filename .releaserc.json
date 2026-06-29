@@ -3,13 +3,21 @@
   "plugins": [
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",
+    [
+      "@semantic-release/exec",
+      {
+        "prepareCmd": "sed -i 's/\"version\": \".*\"/\"version\": \"${nextRelease.version}\"/' G-rez-l-int-gration-et-la-livraison-continue-Application-Angular/package.json && sed -i \"s/^version *= *.*/version = '${nextRelease.version}'/\" G-rez-l-int-gration-et-la-livraison-continue-Application-Java/build.gradle"
+      }
+    ],
     "@semantic-release/changelog",
     "@semantic-release/github",
     [
       "@semantic-release/git",
       {
         "assets": [
-          "CHANGELOG.md"
+          "CHANGELOG.md",
+          "G-rez-l-int-gration-et-la-livraison-continue-Application-Angular/package.json",
+          "G-rez-l-int-gration-et-la-livraison-continue-Application-Java/build.gradle"
         ],
         "message": "chore(release): ${nextRelease.version}"
       }
