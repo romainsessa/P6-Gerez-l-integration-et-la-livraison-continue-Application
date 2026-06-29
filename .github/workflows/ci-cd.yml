@@ -8,7 +8,7 @@ on:
   workflow_dispatch: 
 
 permissions:
-  contents: read
+  contents: write
   packages: write
 
 jobs:
@@ -58,9 +58,33 @@ jobs:
           name: frontend-test-results
           path: G-rez-l-int-gration-et-la-livraison-continue-Application-Angular/test-results
   
+  release:
+    needs:
+      - test-backend
+      - test-frontend
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - name: Run Semantic Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm run release
+      - name: Extract Version
+        id: version
+        run: |
+          VERSION=$(git describe --tags --abbrev=0 | sed 's/^v//')
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+  
   build-backend:
-    name: Build and Push Docker Image Backend
-    needs: test-backend 
+    needs: release 
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -80,9 +104,9 @@ jobs:
           tags: |
             ghcr.io/${{ github.repository_owner }}/workshop-organizer-api:latest
             ghcr.io/${{ github.repository_owner }}/workshop-organizer-api:${{ github.sha }}
+            ghcr.io/${{ github.repository_owner }}/workshop-organizer-api:${{ needs.release.outputs.version }}
   build-frontend:
-    name: Build and Push Docker Image Frontend
-    needs: test-frontend 
+    needs: release 
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -102,3 +126,4 @@ jobs:
           tags: |
            ghcr.io/${{ github.repository_owner }}/workshop-organizer-api:latest
            ghcr.io/${{ github.repository_owner }}/workshop-organizer-api:${{ github.sha }}
+           ghcr.io/${{ github.repository_owner }}/olympic-app:${{ needs.release.outputs.version }}
