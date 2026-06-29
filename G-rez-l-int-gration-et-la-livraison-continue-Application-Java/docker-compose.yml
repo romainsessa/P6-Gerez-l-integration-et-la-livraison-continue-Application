@@ -1,0 +1,34 @@
+services:
+  workshop-organizer-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    #image: workshop-organizer-api
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://workshop-db:5432/workshopsdb"
+      SPRING_DATASOURCE_USERNAME: workshops_user
+      SPRING_DATASOURCE_PASSWORD: oc2024
+    depends_on:
+      workshop-db:
+        condition: service_healthy
+
+  workshop-db:
+    image: postgres:13
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: workshops_user
+      POSTGRES_PASSWORD: oc2024
+      POSTGRES_DB: workshopsdb
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U workshops_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data: {}

@@ -1,0 +1,8 @@
+services:
+  olympic-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    container_name: olympic-games-app
