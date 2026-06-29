@@ -7,6 +7,10 @@ on:
   #  branches: [ "main" ]
   workflow_dispatch: 
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   test-backend:
     runs-on: ubuntu-latest
@@ -29,7 +33,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: backend-test-results
-          path: Backend/test-results
+          path: G-rez-l-int-gration-et-la-livraison-continue-Application-Java/test-results
 
   test-frontend:
     runs-on: ubuntu-latest
@@ -52,13 +56,49 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: frontend-test-results
-          path: Front/test-results
-
-#  build:
-
-#    runs-on: ubuntu-latest
-
-#    steps:
-#    - uses: actions/checkout@v4
-#    - name: Build the Docker image
-#      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+          path: G-rez-l-int-gration-et-la-livraison-continue-Application-Angular/test-results
+  
+  build-backend:
+    name: Build and Push Docker Image Backend
+    needs: test-backend 
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/setup-buildx-action@v3
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with: 
+          context:  G-rez-l-int-gration-et-la-livraison-continue-Application-Java
+          file: G-rez-l-int-gration-et-la-livraison-continue-Application-Java/Dockerfile
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/workshop-organizer-api:latest
+            ghcr.io/${{ github.repository_owner }}/workshop-organizer-api:${{ github.sha }}
+  build-frontend:
+    name: Build and Push Docker Image Frontend
+    needs: test-frontend 
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/setup-buildx-action@v3
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with: 
+          context:  G-rez-l-int-gration-et-la-livraison-continue-Application-Angular
+          file: G-rez-l-int-gration-et-la-livraison-continue-Application-Angular/Dockerfile
+          push: true
+          tags: |
+           ghcr.io/${{ github.repository_owner }}/workshop-organizer-api:latest
+           ghcr.io/${{ github.repository_owner }}/workshop-organizer-api:${{ github.sha }}
