@@ -23,8 +23,8 @@ jobs:
           cache: gradle
       - name: Run tests
         run: |
-          chmod +x ../run-tests.sh
-          ../run-tests.sh
+          chmod +x ../run-test.sh
+          ../run-test.sh
       - name: Upload backend test reports
         uses: actions/upload-artifact@v4
         with:
@@ -46,8 +46,8 @@ jobs:
           cache-dependency-path: G-rez-l-int-gration-et-la-livraison-continue-Application-Angular/package-lock.json
       - name: Run tests
         run: |
-          chmod +x ../run-tests.sh
-          ../run-tests.sh
+          chmod +x ../run-test.sh
+          ../run-test.sh
       - name: Upload frontend test reports
         uses: actions/upload-artifact@v4
         with:
