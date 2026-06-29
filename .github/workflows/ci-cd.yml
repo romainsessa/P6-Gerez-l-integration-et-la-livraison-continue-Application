@@ -19,8 +19,7 @@ jobs:
         working-directory: G-rez-l-int-gration-et-la-livraison-continue-Application-Java
     steps:
       - uses: actions/checkout@v4
-      - name: Set up JDK
-        uses: actions/setup-java@v4
+      - uses: actions/setup-java@v4
         with:
           java-version: 21
           distribution: 'temurin'
@@ -42,8 +41,7 @@ jobs:
         working-directory: G-rez-l-int-gration-et-la-livraison-continue-Application-Angular
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Node
-        uses: actions/setup-node@v4 
+      - uses: actions/setup-node@v4 
         with:
           node-version: 20
           cache: npm
