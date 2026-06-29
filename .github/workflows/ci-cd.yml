@@ -1,0 +1,64 @@
+name: CI CD 
+
+on:
+  #push:
+  #  branches: [ "main" ]
+  #pull_request:
+  #  branches: [ "main" ]
+  workflow_dispatch: 
+
+jobs:
+  test-backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: G-rez-l-int-gration-et-la-livraison-continue-Application-Java
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: 21
+          distribution: 'temurin'
+          cache: gradle
+      - name: Run tests
+        run: |
+          chmod +x ../run-tests.sh
+          ../run-tests.sh
+      - name: Upload backend test reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-test-results
+          path: Backend/test-results
+
+  test-frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: G-rez-l-int-gration-et-la-livraison-continue-Application-Angular
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4 
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: G-rez-l-int-gration-et-la-livraison-continue-Application-Angular/package-lock.json
+      - name: Run tests
+        run: |
+          chmod +x ../run-tests.sh
+          ../run-tests.sh
+      - name: Upload frontend test reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-test-results
+          path: Front/test-results
+
+#  build:
+
+#    runs-on: ubuntu-latest
+
+#    steps:
+#    - uses: actions/checkout@v4
+#    - name: Build the Docker image
+#      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
